@@ -1,0 +1,15 @@
+PASSWORD RESET:
+To reset your password, go to the login page and click "Forgot Password".
+Enter your registered email address.
+You will receive a reset link within 5 minutes.
+
+ACCOUNT LOCKED:
+Accounts are locked after 5 failed login attempts.
+Wait 15 minutes or contact support to unlock.
+
+REFUND POLICY:
+Refunds are processed within 5–7 business days after approval.
+
+CONTACT SUPPORT:
+You can contact support at support@company.com
+Support hours are 9 AM to 6 PM Monday to Friday.
