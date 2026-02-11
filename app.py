@@ -1,11 +1,9 @@
 import streamlit as st
-from dotenv import load_dotenv
 import os
 import numpy as np
 
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-
 from elevenlabs.client import ElevenLabs
 
 # LLM abstraction helpers
@@ -14,16 +12,22 @@ from llm_response import get_llm_answer
 
 
 # ============================================================
-# Environment setup
+# API Keys (supports local .env and Streamlit Cloud secrets)
 # ============================================================
-load_dotenv()
 
-eleven_client = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
+def get_secret(key):
+    return os.getenv(key) or st.secrets.get(key)
+
+
+eleven_client = ElevenLabs(
+    api_key=get_secret("ELEVENLABS_API_KEY")
+)
 
 
 # ============================================================
-# Embedding model (cached so it loads only once)
+# Embedding model (cached)
 # ============================================================
+
 @st.cache_resource
 def load_embed_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
@@ -35,6 +39,7 @@ embed_model = load_embed_model()
 # ============================================================
 # Text chunking for RAG
 # ============================================================
+
 def chunk_text(text, chunk_size=300):
     paragraphs = text.split("\n\n")
     chunks = []
@@ -56,6 +61,7 @@ def chunk_text(text, chunk_size=300):
 # ============================================================
 # Load support documentation
 # ============================================================
+
 def load_support_docs():
     with open("hf_docs.txt", "r", encoding="utf-8") as f:
         return f.read()
@@ -67,8 +73,9 @@ DOC_EMBEDDINGS = embed_model.encode(DOC_CHUNKS)
 
 
 # ============================================================
-# Hybrid retrieval: semantic similarity + keyword boosting
+# Hybrid Retrieval (semantic + keyword boost)
 # ============================================================
+
 def search_docs(query, top_k=3):
     query_lower = query.lower()
 
@@ -76,7 +83,7 @@ def search_docs(query, top_k=3):
     query_emb = embed_model.encode([query])
     sims = cosine_similarity(query_emb, DOC_EMBEDDINGS)[0]
 
-    # Keyword boosting for procedural queries
+    # Keyword boosting
     keyword_scores = []
     for chunk in DOC_CHUNKS:
         score = 0
@@ -95,11 +102,12 @@ def search_docs(query, top_k=3):
 
 
 # ============================================================
-# ElevenLabs text-to-speech
+# ElevenLabs Text-to-Speech
 # ============================================================
+
 def speak_text(text, filename="response.mp3"):
     audio = eleven_client.text_to_speech.convert(
-        voice_id="21m00Tcm4TlvDq8ikWAM",  # Rachel voice (free-tier supported)
+        voice_id="21m00Tcm4TlvDq8ikWAM",
         model_id="eleven_multilingual_v2",
         text=text,
     )
@@ -112,49 +120,30 @@ def speak_text(text, filename="response.mp3"):
 
 
 # ============================================================
-# Local Whisper speech-to-text
+# Streamlit Page Config
 # ============================================================
-from faster_whisper import WhisperModel
 
-@st.cache_resource
-def load_whisper():
-    # "base" is small, fast, and CPU friendly
-    return WhisperModel("base", compute_type="int8")
-
-
-whisper_model = load_whisper()
-
-
-def transcribe_audio(file_path: str) -> str:
-    segments, _ = whisper_model.transcribe(file_path)
-    text = " ".join(segment.text for segment in segments)
-    return text.strip()
-
-
-# ============================================================
-# Streamlit page configuration
-# ============================================================
 st.set_page_config(page_title="HF Voice Support Agent", layout="centered")
-
 st.title("HuggingFace Voice Support Agent")
 
 
 # ============================================================
-# Conversation memory stored in session state
+# Conversation Memory
 # ============================================================
+
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-
-# Display previous chat messages
+# Display previous messages
 for role, message in st.session_state.chat_history:
     with st.chat_message(role):
         st.markdown(message)
 
 
 # ============================================================
-# LLM provider and model selection
+# LLM Provider Selection
 # ============================================================
+
 provider = st.selectbox(
     "Choose LLM Provider",
     ["Groq", "OpenAI", "Gemini"]
@@ -179,49 +168,26 @@ else:
     )
 
 
-st.divider()
-st.subheader("Voice Input")
-
-audio_file = st.file_uploader(
-    "Upload a voice question (wav or mp3)",
-    type=["wav", "mp3"]
-)
-
-
 # ============================================================
-# Chat input submission
+# Chat Input
 # ============================================================
-typed_question = st.chat_input("Type your question")
 
-voice_question = None
-
-if audio_file is not None:
-    if st.button("Transcribe audio"):
-        with open("temp_audio.wav", "wb") as f:
-            f.write(audio_file.read())
-
-        with st.spinner("Transcribing audio..."):
-            voice_question = transcribe_audio("temp_audio.wav")
-
-        st.success(f"Transcribed: {voice_question}")
-
-# Final question selection
-question = voice_question if voice_question else typed_question
+question = st.chat_input("Ask your question")
 
 if question:
 
-    # 1. Save user message to memory
+    # Save user message
     st.session_state.chat_history.append(("user", question))
 
-    # 2. Build recent conversation history for prompt
+    # Build recent conversation memory
     history_text = ""
     for role, msg in st.session_state.chat_history[-6:]:
         history_text += f"{role.capitalize()}: {msg}\n"
 
-    # 3. Retrieve relevant documentation context
+    # Retrieve context
     context = search_docs(question)
 
-    # 4. Construct main support prompt
+    # Construct support prompt
     prompt = f"""
 You are a professional and friendly Hugging Face customer support assistant.
 
@@ -247,23 +213,23 @@ User’s latest question:
 {question}
 """
 
-    # 5. Initialize selected LLM
+    # Initialize selected LLM
     llm = get_llm(provider, model_name)
 
-    # 6. Generate detailed text response
+    # Generate detailed text response
     text_answer_raw = get_llm_answer(llm, provider, prompt)
 
     opening = "I am happy to help you with that.\n\n"
     text_answer = opening + text_answer_raw[:500]
 
-    # 7. Display assistant response
+    # Display assistant response
     with st.chat_message("assistant"):
         st.markdown(text_answer)
 
-    # 8. Save assistant message to memory
+    # Save assistant message
     st.session_state.chat_history.append(("assistant", text_answer))
 
-    # 9. Create concise voice-oriented summary prompt
+    # Voice summary prompt
     voice_prompt = f"""
 You are a friendly technical support voice assistant.
 
@@ -279,10 +245,9 @@ Detailed answer:
 {text_answer}
 """
 
-    # 10. Generate concise voice text
     voice_text = get_llm_answer(llm, provider, voice_prompt)
 
-    # 11. Convert to speech and play audio
+    # Convert to speech
     audio_file = speak_text(voice_text)
 
     st.audio(audio_file)
