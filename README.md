@@ -74,95 +74,132 @@ Enables:
 
 ---
 
-## Architecture Overview
+## 🏗 Architecture Overview
 
 ![Architecture Diagram](docs/architecture.svg)
 
+---
 
 # 🛠 Tech Stack
-Frontend
-Streamlit
 
-Retrieval Layer
-SentenceTransformers
+## Frontend
+- Streamlit
 
-Scikit-learn (cosine similarity)
+## Retrieval Layer
+- SentenceTransformers (`all-MiniLM-L6-v2`)
+- Scikit-learn (Cosine Similarity)
+- NumPy
 
-NumPy
+## LLM Providers
+- Groq API (LLaMA / Mixtral)
+- OpenAI API (GPT models)
+- Google Gemini API
 
-LLM Providers
-Groq API
+## Voice (Optional)
+- ElevenLabs API (local usage)
 
-OpenAI API
+## Deployment
+- Streamlit Community Cloud
 
-Google Gemini API
-
-Voice
-ElevenLabs API (local use)
-
-Deployment
-Streamlit Community Cloud
+---
 
 # 🧩 System Design Decisions
-Why Hybrid Retrieval?
-Pure semantic similarity may miss command-based queries (e.g., pip install transformers).
-Keyword boosting ensures procedural instructions are prioritized.
 
-Why Multi-LLM Support?
-Avoid provider lock-in
+## Why Hybrid Retrieval?
 
-Compare response quality
+Pure semantic similarity may miss command-based or procedural queries  
+(e.g., `pip install transformers`).
 
-Handle rate limits
+To improve retrieval precision, the system combines:
 
-Demonstrate abstraction architecture
+- Semantic similarity (embedding-based search)
+- Keyword boosting (for command-heavy technical queries)
 
-Why Separate Voice Summary Layer?
-Instead of reading the full answer:
+This ensures technical instructions and CLI commands are prioritized correctly.
 
-A second LLM prompt generates a concise conversational summary
+---
 
-Keeps voice natural and non-documentation-like
+## Why Multi-LLM Support?
 
-Why Session-Based Memory?
-Maintains conversational coherence without requiring external vector storage.
+The application abstracts model providers to:
 
-💻 Installation (Local Development)
-1️⃣ Clone Repository
+- Avoid provider lock-in  
+- Compare response quality across models  
+- Handle rate limits gracefully  
+- Demonstrate modular LLM architecture  
+
+The provider can be switched dynamically at runtime.
+
+---
+
+## Why a Separate Voice Summary Layer?
+
+Instead of reading the full technical response:
+
+- A second LLM prompt generates a concise conversational summary  
+- Commands are referenced rather than read verbatim  
+- The tone remains natural and support-oriented  
+
+This improves usability and creates a more human-like interaction model.
+
+---
+
+## Why Session-Based Memory?
+
+The system maintains recent conversation history using Streamlit session state.
+
+This:
+
+- Preserves conversational coherence  
+- Enables contextual follow-up questions  
+- Avoids requiring an external vector database  
+
+---
+
+# 💻 Installation (Local Development)
+
+## 1. Clone Repository
+
+```bash
 git clone https://github.com/your-username/HuggingFace_voice_customer_support_agent.git
 cd HuggingFace_voice_customer_support_agent
-2️⃣ Create Virtual Environment
+
+## 2. Create Virtual Environment
 python -m venv venv
-source venv/bin/activate     # macOS/Linux
-venv\Scripts\activate        # Windows
-3️⃣ Install Dependencies
+
+# macOS / Linux
+source venv/bin/activate
+
+# Windows
+venv\Scripts\activate
+## 3. Install Dependencies
 pip install -r requirements.txt
-4️⃣ Add Environment Variables
-Create a .env file:
+## 4. Add Environment Variables
+Create a .env file in the project root:
 
 GROQ_API_KEY="your_key"
 OPENAI_API_KEY="your_key"
 GEMINI_API_KEY="your_key"
 ELEVENLABS_API_KEY="your_key"
-5️⃣ Run Application
+## 5. Run Application
 streamlit run app.py
 ☁ Deployment (Streamlit Cloud)
 Push repository to GitHub
 
-Create new app on Streamlit Cloud
+Create a new app on Streamlit Community Cloud
 
-Select branch
+Select the desired branch
 
 Add API keys under Secrets
 
 Deploy
 
-Voice synthesis may be disabled automatically on cloud due to API restrictions.
+Voice synthesis may be restricted on public cloud deployments due to third-party API limitations.
 
-📈 Future Improvements
+##📈 Future Improvements
 Replace local documentation file with automated web crawler ingestion
 
-Add persistent vector database (Qdrant / Pinecone)
+Integrate a persistent vector database (Qdrant / Pinecone)
 
 Add authentication and usage tracking
 
@@ -170,6 +207,5 @@ Integrate browser-based speech recognition
 
 Add retrieval precision evaluation metrics
 
-
-📄 License
+#📄 License
 MIT License
