@@ -14,7 +14,7 @@ This project simulates a production-grade technical support system capable of re
 
 **Deployed Version (Text-based):**  
 
-https://your-app-name.streamlit.app  
+[https://your-app-name.streamlit.app](https://hugging-face-voice-customer-support-agent.streamlit.app/)  
 
 **Full Voice Demo (YouTube):** 
 
