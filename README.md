@@ -74,45 +74,40 @@ Enables:
 
 ---
 
-# 🏗 Architecture Overview
+## 🏗 Architecture Overview
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#BB86FC', 'lineColor': '#03DAC6', 'textColor': '#FFFFFF' }}}%%
 graph TD
-    subgraph User_Interface [User Interface Layer]
-        A[User Input] --> B[Streamlit UI]
-    end
 
-    subgraph Logic_Layer [Processing Logic]
-        B --> C[Conversation Memory<br/><i>Session State</i>]
-        C --> D[RAG Retrieval Layer]
-    end
+    A[User Input] --> B[Streamlit UI]
 
-    subgraph Retrieval_Mechanisms [Retrieval Details]
-        D --> D1[SentenceTransformer Embeddings]
-        D --> D2[Cosine Similarity]
-        D --> D3[Keyword Boosting]
-    end
+    B --> C[Conversation Memory - Session State]
+    C --> D[RAG Retrieval Layer]
 
-    subgraph LLM_Orchestration [Generation Layer]
-        D1 & D2 & D3 --> E[Prompt Constructor]
-        E --> F{LLM Selector}
-        
-        F --> G1[Groq]
-        F --> G2[OpenAI]
-        F --> G3[Gemini]
-    end
+    D --> D1[SentenceTransformer Embeddings]
+    D --> D2[Cosine Similarity]
+    D --> D3[Keyword Boosting]
 
-    subgraph Output_Processing [Response Synthesis]
-        G1 & G2 & G3 --> H[Generated Support Response]
-        H --> I[Voice Summarization Prompt]
-        I --> J[Text-to-Speech <i>Optional</i>]
-    end
+    D1 --> E[Prompt Constructor]
+    D2 --> E
+    D3 --> E
 
-    subgraph Final_Delivery [Final Delivery]
-        J --> K[Final Output: Text + Audio]
-        H -.-> K
-    end
+    E --> F{LLM Selector}
+
+    F --> G1[Groq]
+    F --> G2[OpenAI]
+    F --> G3[Gemini]
+
+    G1 --> H[Generated Support Response]
+    G2 --> H
+    G3 --> H
+
+    H --> I[Voice Summarization Layer]
+    I --> J[Text-to-Speech Optional]
+
+    H --> K[Final Text Output]
+    J --> K
+
 
 
 # 🛠 Tech Stack
