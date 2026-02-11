@@ -80,110 +80,118 @@ Enables:
 
 ---
 
-# 🛠 Tech Stack
+🛠 Tech Stack
+Frontend
 
-## Frontend
-- Streamlit
+Streamlit
 
-## Retrieval Layer
-- SentenceTransformers (`all-MiniLM-L6-v2`)
-- Scikit-learn (Cosine Similarity)
-- NumPy
+Retrieval Layer
 
-## LLM Providers
-- Groq API (LLaMA / Mixtral)
-- OpenAI API (GPT models)
-- Google Gemini API
+SentenceTransformers (all-MiniLM-L6-v2)
 
-## Voice (Optional)
-- ElevenLabs API (local usage)
+Scikit-learn (Cosine Similarity)
 
-## Deployment
-- Streamlit Community Cloud
+NumPy
 
----
+LLM Providers
 
-# 🧩 System Design Decisions
+Groq API (LLaMA / Mixtral)
 
-## Why Hybrid Retrieval?
+OpenAI API (GPT models)
 
-Pure semantic similarity may miss command-based or procedural queries  
-(e.g., `pip install transformers`).
+Google Gemini API
+
+Voice (Optional)
+
+ElevenLabs API (local usage)
+
+Deployment
+
+Streamlit Community Cloud
+
+🧩 System Design Decisions
+Why Hybrid Retrieval?
+
+Pure semantic similarity may miss command-based or procedural queries
+(e.g., pip install transformers).
 
 To improve retrieval precision, the system combines:
 
-- Semantic similarity (embedding-based search)
-- Keyword boosting (for command-heavy technical queries)
+Semantic similarity (embedding-based search)
+
+Keyword boosting (for command-heavy technical queries)
 
 This ensures technical instructions and CLI commands are prioritized correctly.
 
----
-
-## Why Multi-LLM Support?
+Why Multi-LLM Support?
 
 The application abstracts model providers to:
 
-- Avoid provider lock-in  
-- Compare response quality across models  
-- Handle rate limits gracefully  
-- Demonstrate modular LLM architecture  
+Avoid provider lock-in
+
+Compare response quality across models
+
+Handle rate limits gracefully
+
+Demonstrate modular LLM architecture
 
 The provider can be switched dynamically at runtime.
 
----
-
-## Why a Separate Voice Summary Layer?
+Why a Separate Voice Summary Layer?
 
 Instead of reading the full technical response:
 
-- A second LLM prompt generates a concise conversational summary  
-- Commands are referenced rather than read verbatim  
-- The tone remains natural and support-oriented  
+A second LLM prompt generates a concise conversational summary
+
+Commands are referenced rather than read verbatim
+
+The tone remains natural and support-oriented
 
 This improves usability and creates a more human-like interaction model.
 
----
-
-## Why Session-Based Memory?
+Why Session-Based Memory?
 
 The system maintains recent conversation history using Streamlit session state.
 
 This:
 
-- Preserves conversational coherence  
-- Enables contextual follow-up questions  
-- Avoids requiring an external vector database  
+Preserves conversational coherence
 
----
+Enables contextual follow-up questions
 
-# 💻 Installation (Local Development)
+Avoids requiring an external vector database
 
-## 1. Clone Repository
-
-```bash
+💻 Installation (Local Development)
+1️⃣ Clone Repository
 git clone https://github.com/your-username/HuggingFace_voice_customer_support_agent.git
 cd HuggingFace_voice_customer_support_agent
 
-## 2. Create Virtual Environment
+2️⃣ Create Virtual Environment
 python -m venv venv
 
-# macOS / Linux
+macOS / Linux
 source venv/bin/activate
 
-# Windows
+Windows
 venv\Scripts\activate
-## 3. Install Dependencies
+
+3️⃣ Install Dependencies
 pip install -r requirements.txt
-## 4. Add Environment Variables
+
+4️⃣ Add Environment Variables
+
 Create a .env file in the project root:
 
 GROQ_API_KEY="your_key"
 OPENAI_API_KEY="your_key"
 GEMINI_API_KEY="your_key"
 ELEVENLABS_API_KEY="your_key"
-## 5. Run Application
+
+5️⃣ Run Application
 streamlit run app.py
+
 ☁ Deployment (Streamlit Cloud)
+
 Push repository to GitHub
 
 Create a new app on Streamlit Community Cloud
@@ -196,7 +204,8 @@ Deploy
 
 Voice synthesis may be restricted on public cloud deployments due to third-party API limitations.
 
-##📈 Future Improvements
+📈 Future Improvements
+
 Replace local documentation file with automated web crawler ingestion
 
 Integrate a persistent vector database (Qdrant / Pinecone)
@@ -207,5 +216,6 @@ Integrate browser-based speech recognition
 
 Add retrieval precision evaluation metrics
 
-#📄 License
+📄 License
+
 MIT License
