@@ -74,40 +74,9 @@ Enables:
 
 ---
 
-## 🏗 Architecture Overview
+## Architecture Overview
 
-```mermaid
-graph TD
-
-    A[User Input] --> B[Streamlit UI]
-
-    B --> C[Conversation Memory - Session State]
-    C --> D[RAG Retrieval Layer]
-
-    D --> D1[SentenceTransformer Embeddings]
-    D --> D2[Cosine Similarity]
-    D --> D3[Keyword Boosting]
-
-    D1 --> E[Prompt Constructor]
-    D2 --> E
-    D3 --> E
-
-    E --> F{LLM Selector}
-
-    F --> G1[Groq]
-    F --> G2[OpenAI]
-    F --> G3[Gemini]
-
-    G1 --> H[Generated Support Response]
-    G2 --> H
-    G3 --> H
-
-    H --> I[Voice Summarization Layer]
-    I --> J[Text-to-Speech Optional]
-
-    H --> K[Final Text Output]
-    J --> K
-
+![Architecture Diagram](docs/architecture.svg)
 
 
 # 🛠 Tech Stack
