@@ -1,4 +1,10 @@
 streamlit
-openai
+sentence-transformers
+scikit-learn
+numpy
 python-dotenv
+elevenlabs
+langchain-groq
+langchain-openai
 google-generativeai
+faster-whisper
