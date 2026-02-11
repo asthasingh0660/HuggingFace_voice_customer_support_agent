@@ -13,9 +13,11 @@ This project simulates a production-grade technical support system capable of re
 ## 🚀 Live Demo
 
 **Deployed Version (Text-based):**  
+
 https://your-app-name.streamlit.app  
 
-**Full Voice Demo (YouTube):**  
+**Full Voice Demo (YouTube):** 
+
 https://your-youtube-link  
 
 ---
@@ -41,6 +43,7 @@ Supports runtime switching between:
 - **Gemini** (Flash models)
 
 Enables:
+
 - Provider comparison
 - Rate-limit handling
 - Model abstraction architecture
@@ -80,7 +83,8 @@ Enables:
 
 ---
 
-🛠 Tech Stack
+## 🛠 Tech Stack
+
 Frontend
 
 Streamlit
@@ -109,8 +113,9 @@ Deployment
 
 Streamlit Community Cloud
 
-🧩 System Design Decisions
-Why Hybrid Retrieval?
+## 🧩 System Design Decisions
+
+### Why Hybrid Retrieval?
 
 Pure semantic similarity may miss command-based or procedural queries
 (e.g., pip install transformers).
@@ -123,7 +128,7 @@ Keyword boosting (for command-heavy technical queries)
 
 This ensures technical instructions and CLI commands are prioritized correctly.
 
-Why Multi-LLM Support?
+### Why Multi-LLM Support?
 
 The application abstracts model providers to:
 
@@ -137,7 +142,7 @@ Demonstrate modular LLM architecture
 
 The provider can be switched dynamically at runtime.
 
-Why a Separate Voice Summary Layer?
+### Why a Separate Voice Summary Layer?
 
 Instead of reading the full technical response:
 
@@ -149,7 +154,7 @@ The tone remains natural and support-oriented
 
 This improves usability and creates a more human-like interaction model.
 
-Why Session-Based Memory?
+### Why Session-Based Memory?
 
 The system maintains recent conversation history using Streamlit session state.
 
@@ -161,36 +166,56 @@ Enables contextual follow-up questions
 
 Avoids requiring an external vector database
 
-💻 Installation (Local Development)
-1️⃣ Clone Repository
+## 💻 Installation (Local Development)
+
+### 1️⃣ Clone Repository
+
+```bash
 git clone https://github.com/your-username/HuggingFace_voice_customer_support_agent.git
 cd HuggingFace_voice_customer_support_agent
+```
 
-2️⃣ Create Virtual Environment
+### 2️⃣ Create Virtual Environment
+
+```bash
 python -m venv venv
+```
 
 macOS / Linux
+```bash
 source venv/bin/activate
+```
 
 Windows
+
+```bash
 venv\Scripts\activate
+```
 
-3️⃣ Install Dependencies
+### 3️⃣ Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-4️⃣ Add Environment Variables
+### 4️⃣ Add Environment Variables
 
 Create a .env file in the project root:
 
+```bash
 GROQ_API_KEY="your_key"
 OPENAI_API_KEY="your_key"
 GEMINI_API_KEY="your_key"
 ELEVENLABS_API_KEY="your_key"
+```
 
-5️⃣ Run Application
+### 5️⃣ Run Application
+
+```bash
 streamlit run app.py
+```
 
-☁ Deployment (Streamlit Cloud)
+## ☁ Deployment (Streamlit Cloud)
 
 Push repository to GitHub
 
@@ -204,7 +229,7 @@ Deploy
 
 Voice synthesis may be restricted on public cloud deployments due to third-party API limitations.
 
-📈 Future Improvements
+## 📈 Future Improvements
 
 Replace local documentation file with automated web crawler ingestion
 
@@ -216,6 +241,6 @@ Integrate browser-based speech recognition
 
 Add retrieval precision evaluation metrics
 
-📄 License
+## 📄 License
 
 MIT License
