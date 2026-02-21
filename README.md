@@ -14,11 +14,11 @@ This project simulates a production-grade technical support system capable of re
 
 **Deployed Version (Text-based):**  
 
-[https://hugging-face-voice-customer-support-agent.streamlit.app/]
+https://hugging-face-voice-customer-support-agent.streamlit.app/
 
 **Full Voice Demo (YouTube):** 
 
-https://your-youtube-link  
+(https://youtu.be/hWOiNcBGIUI)
 
 ---
 
